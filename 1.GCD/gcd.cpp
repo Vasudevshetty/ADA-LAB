@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define MIN 1
-#define MAX 100
+#define MIN 0
+#define MAX 10
 
 pair<int, int> gcdEuclid(int m, int n);
 pair<int, int> gcdConsecutiveIntegerChecking(int m, int n);
@@ -10,29 +10,58 @@ pair<int, int> gcdModifiedEuclid(int m, int n);
 
 /*Implement Euclid's consecutive integer checking and modified Euclid's algorithms to find GCD of two non negative integers and perform compartive analysis.*/
 
-int generateRandomInt(int min, int max)
+void preProcessData(const string &inputFile, const string &outputFile)
 {
-    return rand() % (max - min + 1) + min;
-}
+    ifstream dataFile(inputFile);
+    ofstream processedFile(outputFile);
 
-vector<pair<int, int>> generateRandomPairs(int numTests)
-{
-    vector<pair<int, int>> randomPairs;
-
-    for (int i = 0; i < numTests; i++)
+    if (!dataFile.is_open() || !processedFile.is_open())
     {
-        int m = generateRandomInt(MIN, MAX);
-        int n = generateRandomInt(MIN, MAX);
-        randomPairs.push_back({m, n});
+        cerr << "Unable to open the file" << endl;
+        return;
     }
 
-    return randomPairs;
+    vector<array<int, 4>> data;
+    string line;
+
+    getline(dataFile, line);
+
+    while (getline(dataFile, line))
+    {
+        stringstream ss(line);
+        int m, n, gcd, euclid, consecutive, modified;
+        ss >> m >> n >> gcd >> euclid >> consecutive >> modified;
+        data.push_back({m, euclid, consecutive, modified});
+    }
+
+    processedFile << "# m  min_euclid max_euclid min_consecutive max_consecutive min_modified max_modified\n";
+    for (size_t i = 0; i < data.size(); i += 10)
+    {
+        int min_euclid = INT_MAX, max_euclid = INT_MIN;
+        int min_consecutive = INT_MAX, max_consecutive = INT_MIN;
+        int min_modified = INT_MAX, max_modified = INT_MIN;
+
+        for (size_t j = i; j < i + 10 && j < data.size(); ++j)
+        {
+            min_euclid = min(min_euclid, data[j][3]);
+            max_euclid = max(max_euclid, data[j][3]);
+            min_consecutive = min(min_consecutive, data[j][4]);
+            max_consecutive = max(max_consecutive, data[j][4]);
+            min_modified = min(min_modified, data[j][5]);
+            max_modified = max(max_modified, data[j][5]);
+        }
+
+        processedFile << data[i][0] << " "
+                      << min_euclid << " " << max_euclid << " "
+                      << min_consecutive << " " << max_consecutive << " "
+                      << min_modified << " " << max_modified << "\n";
+    }
+    dataFile.close();
+    processedFile.close();
 }
 
 int main()
 {
-    srand(time(0));
-
     ofstream dataFile("../data/gcd_counts.dat");
 
     if (!dataFile.is_open())
@@ -41,31 +70,39 @@ int main()
         return 1;
     }
 
-    int numTests;
-    cin >> numTests;
-
     dataFile << "# GCD  | euclid | consective | modified \n";
 
-    for (const auto &testCase : generateRandomPairs(numTests))
+    for (int i = MIN; i <= MAX; i += 10)
     {
-        int m = testCase.first, n = testCase.second;
-        auto resultEuclid = gcdEuclid(m, n);
-        auto resultConsecutive = gcdConsecutiveIntegerChecking(m, n);
-        auto resultModifiedEuclid = gcdModifiedEuclid(m, n);
+        for (int j = 2; j <= i; j++)
+        {
+            for (int k = 2; k <= i; k++)
+            {
+                int m = j, n = k;
+                auto resultEuclid = gcdEuclid(m, n);
+                auto resultConsecutive = gcdConsecutiveIntegerChecking(m, n);
+                auto resultModifiedEuclid = gcdModifiedEuclid(m, n);
 
-        int gcd = resultEuclid.first;
-        printf("Gcd of %d and %d is %d\n", m, n, gcd);
-        printf("The Count taken is %d %d %d\n", resultEuclid.second, resultConsecutive.second, resultModifiedEuclid.second);
+                int gcd = resultEuclid.first;
 
-        dataFile << m << " "
-                 << n << " " << gcd
-                 << " "
-                 << resultEuclid.second << " "
-                 << resultConsecutive.second << " "
-                 << resultModifiedEuclid.second << endl;
+                /*
+                printf("Gcd of %d and %d is %d\n", m, n, gcd);
+                printf("The Count taken is %d %d %d\n", resultEuclid.second, resultConsecutive.second, resultModifiedEuclid.second);
+                */
+
+                dataFile << m << " "
+                         << n << " " << gcd
+                         << " "
+                         << resultEuclid.second << " "
+                         << resultConsecutive.second << " "
+                         << resultModifiedEuclid.second << endl;
+            }
+        }
     }
-
     dataFile.close();
+
+    preProcessData("../data/gcd_counts.dat", "../data/gcd_processed_counts.dat");
+
     return 0;
 }
 
