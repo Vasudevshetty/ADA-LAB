@@ -1,19 +1,16 @@
-set terminal pngcairo size 1000,800 enhanced font 'Verdana,10'
-set output 'binary_search_time.png'
+set terminal pngcairo size 800,600 enhanced font 'Verdana,10'
+set output './images/binary_search_time.png' 
 
-set title "Binary Search Timing Analysis"
+set title "Number of Comparisons for Binary Search"
 set xlabel "Array Size"
-set ylabel "Time (nano-seconds)"
-set grid
+set ylabel "Number of Comparisons"
 
-set xrange [0:10000]
-set yrange [0:10e-4]
+set xrange [100:1000]
+set yrange [0:15]
 
-set key outside
-set style data linespoints
+plot './data/binarySearch/binary_search_time.dat' using 1:2 title 'best case' with linespoints, \
+     './data/binarySearch/binary_search_time.dat' using 1:3 title 'average case' with linespoints, \
+     './data/binarySearch/binary_search_time.dat' using 1:4 title 'worst case' with linespoints
 
-plot "./files/binarySearch/binary_search_time.dat" using 1:2 title "Best Case" with linespoints, \
-     "./files/binarySearch/binary_search_time.dat" using 1:3 title "Average Case" with linespoints, \
-     "./files/binarySearch/binary_search_time.dat" using 1:4 title "Worst Case" with linespoints
 
 set output
