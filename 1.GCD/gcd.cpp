@@ -1,4 +1,6 @@
-#include <bits/stdc++.h>
+#include<iostream>
+#include<fstream>
+#include<vector>
 using namespace std;
 
 #define MIN 10
@@ -24,6 +26,7 @@ int main()
 
     for (int i = MIN; i <= MAX; i += 10)
     {
+        int m, n;
         int min_euclid = 10000, max_euclid = 0;
         int min_consecutive = 10000, max_consecutive = 0;
         int min_modified = 10000, max_modified =0;
@@ -31,7 +34,7 @@ int main()
         {
             for (int k = 2; k <= i; k++)
             {
-                int m = j, n = k;
+                m = j, n = k;
                 auto resultEuclid = gcdEuclid(m, n);
                 auto resultConsecutive = gcdConsecutiveIntegerChecking(m, n);
                 auto resultModifiedEuclid = gcdModifiedEuclid(m, n);
@@ -49,7 +52,7 @@ int main()
                 max_modified = max(max_modified, resultModifiedEuclid.second);
             }
         }
-        dataFile << i << " "
+        dataFile << m << " "
                  << min_euclid << " " << max_euclid << " "
                  << min_consecutive << " " << max_consecutive << " "
                  << min_modified << " " << max_modified << "\n";

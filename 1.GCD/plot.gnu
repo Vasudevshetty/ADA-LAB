@@ -6,8 +6,8 @@ set xlabel "Test Case Index"
 set ylabel "Number of Operations"
 set grid
 
-set xrange [0:110]
-set yrange [-10:110]
+set xrange [0:220]
+set yrange [-10:220]
 
 set key outside
 set style data linespoints
