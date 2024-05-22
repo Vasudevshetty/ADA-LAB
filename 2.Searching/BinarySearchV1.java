@@ -32,9 +32,9 @@ public class BinarySearchV1 {
         int minVal = 1;
         int maxVal = 100000;
 
-        Files.createDirectories(Paths.get("./2.Searching/files/binarySearch"));
+        Files.createDirectories(Paths.get("./2.Searching/data/binarySearch"));
 
-        try (FileWriter dataFile = new FileWriter("./2.Searching/files/binarySearch/binary_search_time.dat")) {
+        try (FileWriter dataFile = new FileWriter("./2.Searching/data/binarySearch/binary_search_system_time.dat")) {
             dataFile.write("#Size Best Average Worst\n");
 
             for (int size = 1; size <= 10000; size += 100) {
