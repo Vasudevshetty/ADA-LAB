@@ -4,7 +4,7 @@
 using namespace std;
 
 #define MIN 10
-#define MAX 200
+#define MAX 100
 
 pair<int, int> gcdEuclid(int m, int n);
 pair<int, int> gcdConsecutiveIntegerChecking(int m, int n);
