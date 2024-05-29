@@ -45,7 +45,7 @@ public class BinarySearch {
         try (FileWriter dataFile = new FileWriter("./2.Searching/data/binarySearch/binary_search_time.dat")) {
             dataFile.write("#Size Best Average Worst\n");
 
-            for (int size = 2; size <= 2048; size *= 2) {
+            for (int size = 2;  size <= 2048; size *= 2) {
                 int[] array = GenearteRandomArray.genearteRandomArray(size, minVal, maxVal);
                 Arrays.sort(array);
 

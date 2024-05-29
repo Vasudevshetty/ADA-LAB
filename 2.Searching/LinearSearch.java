@@ -15,7 +15,7 @@ class LinearSearchResult {
 }
 
 public class LinearSearch {
-    public static LinearSearchResult binarySearch(int[] array, int key) {
+    public static LinearSearchResult linearSearch(int[] array, int key) {
         int count = 0;
 
         for (int i = 0; i < array.length; i++) {
@@ -39,11 +39,10 @@ public class LinearSearch {
 
             for (int size = 100; size <= 1000; size += 100) {
                 int[] array = GenearteRandomArray.genearteRandomArray(size, minVal, maxVal);
-                Arrays.sort(array);
 
-                LinearSearchResult bestTime = binarySearch(array, array[0]);
-                LinearSearchResult averageTime = binarySearch(array, array[array.length / 2]);
-                LinearSearchResult worstTime = binarySearch(array, array[array.length - 1]);
+                LinearSearchResult bestTime = linearSearch(array, array[0]);
+                LinearSearchResult averageTime = linearSearch(array, array[array.length / 2]);
+                LinearSearchResult worstTime = linearSearch(array, array[array.length - 1]);
 
                 dataFile.write(size + " " + bestTime.comparisons + " " + averageTime.comparisons + " "
                         + worstTime.comparisons + "\n");
