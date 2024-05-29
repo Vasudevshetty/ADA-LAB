@@ -13,7 +13,7 @@ public class Sorting {
             for (int j = 0; j < array.length - i - 1; j++) {
                 if (array[j] > array[j + 1]) {
                     flag = true;
-                    swap(array, i, j);
+                    swap(array, j, j + 1);
                 }
                 count++;
             }
