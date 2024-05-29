@@ -17,7 +17,7 @@ public class Plotter {
             int minVal = 10;
             int maxVal = 1000;
 
-            dataFile.write("#size best worst average");
+            dataFile.write("#size best worst average\n");
 
             for (int size = 100; size <= 1000; size += 100) {
                 int[] bestArray = GenerateRandomArray.generateRandomArray(size, minVal, maxVal);
