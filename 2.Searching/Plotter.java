@@ -23,7 +23,7 @@ public class Plotter {
 
                 dataFile.write(size + " " + best.comparisons + " " + average.comparisons + " " + worst.comparisons + "\n");
 
-                size = searchIsLinear ? size + 100 : size * 2;
+                size = searchIsLinear ? size + 1000 : size * 2;
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
