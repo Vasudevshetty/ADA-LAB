@@ -40,11 +40,28 @@ public class Sorting {
         return count;
     }
 
+    private static int insertionSort(int[] array) {
+        int count = 0;
+        for (int i = 1; i < array.length; i++) {
+            int min = array[i];
+            int j = i - 1;
+            while (j >= 0 && array[j] > min) {
+                array[j + 1] = array[j];
+                j--;
+                count++;
+            }
+            array[j + 1] = min;
+        }
+        return count;
+    }
+
     public static int sort(int[] array, String sortType) {
         if (sortType.equals("bubble"))
             return bubbleSort(array);
         if (sortType.equals("selection"))
             return selectionSort(array);
+        if (sortType.equals("insertion"))
+            return insertionSort(array);
 
         return -1;
     }
