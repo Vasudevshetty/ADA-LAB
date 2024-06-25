@@ -19,7 +19,11 @@ public class Plotter {
 
             dataFile.write("#size best average worst\n");
 
-            for (int size = 10; size <= 100; size += 10) {
+            boolean divideOrBrute = sortType.equals("merge") || sortType.equals("quick");
+
+            for (int size = divideOrBrute ? 2 : 10; size <= (divideOrBrute ? 1024 : 100); size = divideOrBrute
+                    ? size * 2
+                    : size + 10) {
                 int[] bestArray = GenerateRandomArray.generateRandomArray(size, minVal, maxVal);
 
                 Arrays.sort(bestArray);

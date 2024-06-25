@@ -83,6 +83,7 @@ public class Sorting {
             }
         }
         swap(array, i + 1, high);
+        count++;
         return new int[] { i + 1, count };
     }
 
