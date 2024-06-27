@@ -8,14 +8,15 @@ public class StringMatchingBenchmark {
         int count = 0;
         for (int i = 0; i <= text.length() - pattern.length(); i++) {
             int j = 0;
-            while (j < pattern.length() && pattern.charAt(j) == text.charAt(i + j)) {
+            while (j < pattern.length()) {
                 count++;
+                if (pattern.charAt(j) != text.charAt(i + j))
+                    break;
+
                 j++;
             }
-            // Increment the count for the mismatch or end of pattern
-            if (j < pattern.length()) {
-                count++;
-            }
+            if (j == pattern.length())
+                return count;
         }
         return count;
     }
@@ -38,15 +39,16 @@ public class StringMatchingBenchmark {
 
                 int best = stringMatching(text.toString(), pattern.toString());
 
-                pattern.setCharAt(length - 1, 'b'); // Average case: last character different
-                int average = stringMatching(text.toString(), pattern.toString());
-
-                pattern.setCharAt(length - 1, 'a'); // Reset pattern for worst case calculation
-                for (int i = 0; i < length; i++) {
-                    pattern.setCharAt(i, 'b'); // Worst case: all characters different
-                }
+                pattern.setCharAt(length - 1, 'b'); // Reset pattern for worst case calculation
                 int worst = stringMatching(text.toString(), pattern.toString());
 
+                for (int i = 0; i < length; i++) {
+                    char[] chars = { 'a', 'b', 'c' };
+                    pattern.setCharAt(i, chars[(int) (Math.random() * chars.length)]);
+
+                }
+
+                int average = stringMatching(text.toString(), pattern.toString());
                 file.write(length + " " + best + " " + average + " " + worst + "\n");
 
                 length += length < 100 ? 10 : 100;
