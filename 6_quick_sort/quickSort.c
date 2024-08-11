@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -65,6 +66,7 @@ void test()
 
 void plotter()
 {
+    srand(time(NULL));
     FILE *data = fopen("quickSort_results.dat", "w");
     fprintf(data, "#size best avg worst\n");
     for (int n = 2; n <= 1024; n *= 2)
