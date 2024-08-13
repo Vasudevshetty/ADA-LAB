@@ -13,13 +13,16 @@ int knap(int n, int m)
     {
         for (int j = 0; j < m + 1; j++)
         {
-            count++;
             if (i == 0 || j == 0)
                 t[i][j] = 0;
-            else if (j < w[i - 1])
-                t[i][j] = t[i - 1][j];
             else
-                t[i][j] = max(t[i - 1][j], v[i - 1] + t[i - 1][j - w[i - 1]]);
+            {
+                count++;
+                if (j < w[i - 1])
+                    t[i][j] = t[i - 1][j];
+                else
+                    t[i][j] = max(t[i - 1][j], v[i - 1] + t[i - 1][j - w[i - 1]]);
+            }
         }
     }
 
@@ -32,9 +35,9 @@ int knapMemoized(int i, int j)
     if (t[i][j] == -1)
     {
         if (j < w[i - 1])
-            t[i][j] = knap(i - 1, j);
+            t[i][j] = knapMemoized(i - 1, j);
         else
-            t[i][j] = max(knap(i - 1, j), v[i - 1] + knap(i - 1, j - w[i - 1]));
+            t[i][j] = max(knapMemoized(i - 1, j), v[i - 1] + knapMemoized(i - 1, j - w[i - 1]));
     }
 
     return t[i][j];
@@ -42,9 +45,7 @@ int knapMemoized(int i, int j)
 
 void run(int memoized)
 {
-    FILE *data = fopen("knapsack_result.dat", "w");
-
-    fprintf(data, "#size comparisons\n");
+    FILE *data = fopen("knapsack_result.dat", "a");
 
     int n, m;
     printf("Enter no of items: ");
@@ -63,7 +64,7 @@ void run(int memoized)
     {
         for (int i = 0; i < n + 1; i++)
             for (int j = 0; j < m + 1; j++)
-                t[i][j] = -1;
+                t[i][j] = i == 0 || j == 0 ? 0 : -1;
     }
 
     printf("The max value of the knapsack is %d\n", memoized == 0 ? knap(n, m) : knapMemoized(n, m));
