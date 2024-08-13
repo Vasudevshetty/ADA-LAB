@@ -11,6 +11,7 @@ MODE=$2
 
 BASENAME=$(basename "$SOURCE_FILE" .c)
 DATA_FILE="data/${BASENAME}_results.dat"
+PNG_FILE="img/${BASENAME}_results.png"
 
 mkdir -p data img
 
@@ -35,13 +36,31 @@ elif [ "$MODE" = "plot" ]; then
 
     echo "Plotting the data..."
 
+    PLOT_COMMAND=""
+    if [ "$BASENAME" = "floyds" ]; then
+        PLOT_COMMAND="plot '$DATA_FILE' using 1:2 with linespoints title 'Floyds general' lc rgb 'blue';"
+    else
+        PLOT_COMMAND="plot '$DATA_FILE' using 1:2 with linespoints title 'Best Case' lc rgb 'blue', \
+        '$DATA_FILE' using 1:3 with linespoints title 'Worst Case' lc rgb 'red';"
+    fi
+
+    gnuplot -e "set terminal pngcairo size 800, 600; \
+                        set output '$PNG_FILE'; \
+                        set title 'Performace analysis'; \
+                        set xlabel 'Input size(n)'; \
+                        set ylabel 'No of comparisons'; \
+                        set key outside right top; \
+                        $PLOT_COMMAND"
+
     gnuplot -persist -e "set title 'Performace analysis'; \
                         set xlabel 'Input size(n)'; \
                         set ylabel 'No of comparisons'; \
                         set key outside right top; \
-                        plot '$DATA_FILE' with linespoints title 'Floyds general' lc rgb 'blue';"
+                        $PLOT_COMMAND"
 
     echo "plotting completed."
+
+    rm *.exe
 else
     echo "Invalid mode: $MODE. Please use 'test' or 'plot'"
     exit 1
