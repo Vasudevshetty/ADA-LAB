@@ -1,169 +1,135 @@
 #include <stdio.h>
-#include <string.h>
-#include <limits.h>
 #include <stdlib.h>
+#include <limits.h>
 
-typedef struct Edge
+typedef struct edge
 {
     int source;
     int destination;
-    int weight;
-} Edge;
+    int distance;
+} edge;
 
-Edge mst[10];
 int heapOperation = 0, graphOperation = 0;
-int n, cost[10][10];
-int heapsize = 0;
+int heapsize = 0, vertices = 0;
+int cost[10][10], n;
+edge mst[10];
+int visited[10] = {0}, removed[10] = {0};
 
-void swap(Edge *a, Edge *b)
+void swap(edge *a, edge *b)
 {
-    Edge temp = *a;
+    edge temp = *a;
     *a = *b;
     *b = temp;
 }
 
-void heapify(Edge heap[], int i)
+void heapify(edge heap[], int n, int i)
 {
-    int smallest = i;
-    int left = 2 * i + 1;
-    int right = 2 * i + 2;
+    int lowest = i, left = 2 * i + 1, right = 2 * i + 2;
     heapOperation++;
 
-    if (left < heapsize && heap[left].weight < heap[smallest].weight)
-        smallest = left;
+    if (left < n && heap[left].distance < heap[lowest].distance)
+        lowest = left;
+    if (right < n && heap[right].distance < heap[lowest].distance)
+        lowest = right;
 
-    if (right < heapsize && heap[right].weight < heap[smallest].weight)
-        smallest = right;
-
-    if (smallest != i)
+    if (lowest != i)
     {
-        swap(&heap[smallest], &heap[i]);
-        heapify(heap, smallest);
+        swap(&heap[lowest], &heap[i]);
+        heapify(heap, n, lowest);
     }
 }
 
-void buildHeap(Edge heap[])
+void buildHeap(edge heap[], int heapsize)
 {
     for (int i = (heapsize / 2) - 1; i >= 0; i--)
-        heapify(heap, i);
+        heapify(heap, heapsize, i);
 }
 
-Edge deleteMinEdgeFromHeap(Edge heap[])
+edge deleteMin(edge heap[])
 {
-    Edge minEdge = heap[0];
-    heap[0] = heap[--heapsize]; // Update heapsize globally
-    heapify(heap, 0);           // Fix the heap property
-    return minEdge;
-}
-
-void prim()
-{
-    Edge heap[10];
-    int visited[10] = {0}; // Initialize visited array to 0
-    int removed[10] = {0}; // Initialize removed array to 0
-
-    visited[0] = 1;
-    heap[heapsize++] = (Edge){0, -1, 0};
-
-    for (int vertex = 0; vertex < n - 1; vertex++)
-    {
-        Edge minEdge = deleteMinEdgeFromHeap(heap);
-
-        if (minEdge.destination != -1)
-            mst[vertex] = minEdge;
-
-        int source = minEdge.source;
-        removed[source] = 1;
-
-        for (int target = 0; target < n; target++)
-        {
-            graphOperation++;
-
-            if (!visited[target] && cost[source][target] != INT_MAX && !removed[target])
-            {
-                visited[target] = 1;
-                heap[heapsize++] = (Edge){source, target, cost[source][target]};
-            }
-
-            if (visited[target] && cost[source][target] != INT_MAX && !removed[target])
-            {
-                for (int heapIndex = 0; heapIndex < heapsize; heapIndex++)
-                {
-                    if (heap[heapIndex].destination == target && cost[source][target] < heap[heapIndex].weight)
-                    {
-                        heap[heapIndex].weight = cost[source][target];
-                        heap[heapIndex].source = source;
-                        break;
-                    }
-                }
-            }
-        }
-        buildHeap(heap);
-    }
+    edge min = heap[0];
+    heap[0] = heap[heapsize - 1];
+    heapsize--;
+    heapify(heap, heapsize, 0);
+    return min;
 }
 
 void makeGraph()
 {
-    printf("Enter total number of vertices: ");
+    printf("Enter n: ");
     scanf("%d", &n);
-    printf("Enter the cost matrix of the graph:\n");
-
+    printf("Enter cost matrix,\n");
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
         {
             scanf("%d", &cost[i][j]);
-            if (i != j && cost[i][j] == 0) // Only replace 0 with INT_MAX if it's not on the diagonal
+            if (cost[i][j] == 0 && i != j)
                 cost[i][j] = INT_MAX;
         }
     }
 }
 
-void run(int plot)
+void prim(edge heap[])
 {
-    int sum = 0;
-    makeGraph();
-    prim();
+    heap[heapsize] = (edge){0, -1, 0};
+    heapsize++;
 
-    for (int i = 0; i < n - 1; i++)
+    while (vertices != n)
     {
-        printf("%c -> %c == %d\n", mst[i].source + 'A', mst[i].destination + 'A', mst[i].weight);
-        sum += mst[i].weight;
-    }
+        edge min = deleteMin(heap);
+        mst[vertices] = min;
+        vertices++;
 
-    printf("Minimum distance is %d\n", sum);
+        int source = min.source;
+        removed[source] = 1;
 
-    if (plot)
-    {
-        FILE *data = fopen("prims_results.dat", "a");
-        if (data != NULL)
+        for (int vertex = 1; vertex < n; vertex++)
         {
-            fprintf(data, "#size count\n");
-            int maxCount = heapOperation > graphOperation ? heapOperation : graphOperation;
-            fprintf(data, "%d %d\n", n, maxCount);
-            fclose(data); // Close the file after writing
+            if (!visited[vertex] && cost[source][vertex] != INT_MAX && !removed[vertex])
+            {
+                visited[vertex] = 1;
+                heap[heapsize++] = (edge){vertex, source, cost[source][vertex]};
+            }
+
+            if (visited[vertex] && cost[source][vertex] != INT_MAX && !removed[vertex])
+            {
+                for (int heapIdx = 0; heapIdx < heapsize; heapIdx++)
+                {
+                    if (heap[heapIdx].source == vertex && heap[heapIdx].distance > cost[source][vertex])
+                    {
+                        heap[heapIdx].distance = cost[source][vertex];
+                        heap[heapIdx].destination = source;
+                        break;
+                    }
+                }
+            }
         }
-        else
-        {
-            printf("Error opening file for writing.\n");
-        }
+        buildHeap(heap, heapsize);
     }
 }
 
-int main(int argc, char *argv[])
+void run()
 {
-    if (argc < 2)
-    { // Corrected to check if there's at least one argument after the program name
-        printf("Usage: <test|plot>\n");
-        return -1;
+    makeGraph();
+    vertices = 0;
+    graphOperation = 0;
+    heapOperation = 0;
+
+    edge heap[10];
+    prim(heap);
+
+    int sum = 0;
+    for (int i = 1; i < vertices; i++)
+    {
+        printf("%d => %d\n", i, mst[i].distance);
+        sum += mst[i].distance;
     }
 
-    if (!strcmp(argv[1], "test"))
-        run(0);
-    else if (!strcmp(argv[1], "plot"))
-        run(1);
-    else
-        printf("Invalid argument: %s\nUsage: <test|plot>\n", argv[1]);
-
+    printf("The minimum distance is %d\n", sum);
+}
+int main()
+{
+    run();
     return 0;
 }
