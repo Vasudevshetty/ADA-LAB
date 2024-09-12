@@ -58,6 +58,7 @@ void test()
         printf("Pattern didn't get matched.\n");
     else
         printf("Pattern got matched from index %d to %d.\n", result.index, result.index + patternLength);
+    printf("Count: %d\n", result.count);
 }
 
 void plotter()
